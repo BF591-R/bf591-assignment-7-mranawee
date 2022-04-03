@@ -57,8 +57,10 @@ server <- function(input, output, session) {
     #' read.csv. Return this data frame in the normal return() style.
     load_data <- reactive({
         req(input$file)
-        return(read.csv(input$file$datapath, header=TRUE, sep=","))  
+        return(read.csv(input$file$datapath, header=TRUE, sep=",")%>%
+                 rename(Gene = X))  
     })
+    
     
     #' Volcano plot
     #'
@@ -90,7 +92,7 @@ server <- function(input, output, session) {
             ylab(paste('-log10',y_name, sep = ' ')) +
             scale_color_manual(values=c(color1, color2)) +
             ggtitle('Volcano Plot of DeSeq Differential Expression Results') +
-            theme_dark()
+            theme_minimal()
             
             return(plt)
         }
@@ -129,6 +131,7 @@ server <- function(input, output, session) {
     
     # Same here, just return the table as you want to see it in the web page
     output$table <- renderTable(draw_table(load_data(), input$slider)) # replace this NULL
+    
 }
 
 # Run the application
